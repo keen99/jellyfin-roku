@@ -4,7 +4,7 @@ sub Main (args as dynamic) as void
     'bs:disable-next-line
     if type(Rooibos__Init) = "Function" then Rooibos__Init()
 
-    ' The main function that runs when the application is launched.
+   ' The main function that runs when the application is launched.
     m.screen = CreateObject("roSGScreen")
 
     ' Set global constants
@@ -72,7 +72,7 @@ sub Main (args as dynamic) as void
     while true
         msg = wait(0, m.port)
         if type(msg) = "roSGScreenEvent" and msg.isScreenClosed()
-            print "CLOSING SCREEN"
+            dlog("CLOSING SCREEN", "Main")
             return
         else if isNodeEvent(msg, "exit")
             return
@@ -293,7 +293,7 @@ sub Main (args as dynamic) as void
                 end if
                 ' todo: add other screens to be refreshed - movie detail, tv series, episode list etc.
             else
-                print "Unhandled roDeviceInfoEvent:"
+                dlog("Unhandled roDeviceInfoEvent:", "Main")
                 print msg.GetInfo()
             end if
         else if type(msg) = "roInputEvent"
@@ -315,12 +315,15 @@ sub Main (args as dynamic) as void
                 end if
             end if
         else
-            print "Unhandled " type(msg)
+            dlog("Unhandled " + type(msg), "Main")
             print msg
         end if
     end while
 
+
+
 end sub
+
 
 function LoginFlow(startOver = false as boolean)
     'Collect Jellyfin server and user information
@@ -340,12 +343,12 @@ function LoginFlow(startOver = false as boolean)
 
     m.serverSelection = "Saved"
     if startOver or invalidServer
-        print "Get server details"
+      dlog("Main: Get server details")
         SendPerformanceBeacon("AppDialogInitiate") ' Roku Performance monitoring - Dialog Starting
         m.serverSelection = CreateServerGroup()
         SendPerformanceBeacon("AppDialogComplete") ' Roku Performance monitoring - Dialog Closed
         if m.serverSelection = "backPressed"
-            print "backPressed"
+            dlog("backPressed", "Main")
             m.global.sceneManager.callFunc("clearScenes")
             return false
         end if
@@ -394,7 +397,7 @@ function LoginFlow(startOver = false as boolean)
 
     m.user = AboutMe()
     if m.user = invalid or m.user.id <> get_setting("active_user")
-        print "Login failed, restart flow"
+        dlog("Login failed, restart flow", "Main")
         unset_setting("active_user")
         goto start_login
     end if
@@ -462,7 +465,7 @@ sub DeleteFromServerList(urlToDelete)
 end sub
 
 sub RunScreenSaver()
-    print "Starting screensaver..."
+    dlog( "Starting screensaver...", "Main")
     screen = createObject("roSGScreen")
     m.port = createObject("roMessagePort")
     screen.setMessagePort(m.port)

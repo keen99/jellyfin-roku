@@ -16,7 +16,7 @@ sub execute()
     ts = CreateObject("roTimespan")
     maxTimeMs = 2200
 
-    'monitor each port and collect messages
+    ' monitor each port and collect messages
     while True
         elapsed = ts.TotalMilliseconds()
         if elapsed >= maxTimeMs
@@ -36,7 +36,10 @@ sub execute()
     end while
 
     m.top.content = m.servers
+    dlog("servers found vvv", "SDT:execute")
     print m.servers[0], m.servers[1], m.servers[2]
+    dlog("servers found ^^^", "SDT:execute")
+
 end sub
 
 sub AddServer(server)
@@ -75,9 +78,11 @@ sub ProcessClientDiscoveryResponse(message)
                 iconWidth: 120,
                 iconHeight: 120
             })
-            print "Found Jellyfin server using client discovery at " + server.Address
+            dlog("Found Jellyfin server using client discovery at " + server.Address, "SDT:ProcessClientDiscoveryResponse")
+            ' print "Found Jellyfin server using client discovery at " + server.Address
         catch e
-            print "Error scanning for jellyfin server", message
+            dlog("SDT:ProcessClientDiscoveryResponse", "Error scanning for jellyfin server ", "SDT:ProcessClientDiscoveryResponse")
+            print message
         end try
     end if
 end sub
@@ -122,7 +127,7 @@ sub ProcessSSDPResponse(message)
     if locationUrl = invalid
         return
     else if m.locationUrlMap[locationUrl] <> invalid
-        print "Already discovered this location " + locationUrl
+        dlog("Already discovered this location " + locationUrl, "SDT:ProcessSSDPResponse")
         return
     end if
 
@@ -162,7 +167,7 @@ sub ProcessSSDPResponse(message)
                 end if
             end for
             AddServer(server)
-            print "Found jellyfin server using SSDP and DLNA at " + server.baseUrl
+            dlog("Found jellyfin server using SSDP and DLNA at " + server.baseUrl, "SDT:ProcessSSDPResponse")
         end if
     end if
 end sub
